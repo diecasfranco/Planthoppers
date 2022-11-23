@@ -1,0 +1,72 @@
+### nanopore pipeline
+### Barcodes
+
+NB01 CACAAAGACACCGACAACTTTCTT
+NB02 ACAGACGACTACAAACGGAATCGA
+NB03 CCTGGTAACTGGGACACAAGACTC
+NB04 TAGGGAAACACGATAGAATCCGAA
+NB05 AAGGTTACACAAACCCTGGACAAG
+NB06 GACTACTTTCTGCCTTTGCGAGAA
+NB07 AAGGATTCATTCCCACGGTAACAC
+NB08 ACGTAACTTGGTTTGTTCCCTGAA
+NB09 AACCAAGACTCGCTGTGCCTAGTT
+NB10 GAGAGGACAAAGGTTTCAACGCTT
+NB11 TCCATTCCCTCCGATAGATGAAAC
+NB12 TCCGATTCTGCTTCTTTCTACCTG
+NB13 AGAACGACTTCCATACTCGTGTGA
+NB14 AACGAGTCTCTTGGGACCCATAGA
+NB15 AGGTCTACCTCGCTAACACCACTG
+NB16 CGTCAACTGACAGTGGTTCGTACT
+NB17 ACCCTCCAGGAAAGTACCTCTGAT
+NB18 CCAAACCCAACAACCTAGATAGGC
+NB19 GTTCCTCGTGCAGTGTCAAGAGAT
+NB20 TTGCGTCCTGTTACGAGAACTCAT
+NB21 GAGCCTCTCATTGTCCGTTCTCTA
+NB22 ACCACTGCCATGTATCAAAGTACG
+NB23 CTTACTACCCAGTGAACCTCCTCG
+
+### All the dependences are installed in the conda environment "nanopore". To activate this env, type
+### Some of the dependences are guppy, Canu, Flye, medaka, megahit, minimap2, Racon, Nanopolish
+conda activate nanopore
+
+
+### Run basecaller
+### Here the objective is to increase the quality of the reads
+
+guppy_basecaller -i DICPAN5/ -s new_DICPAN5_pass_q15 --flowcell FLO-MIN106 --kit SQK-LSK109  -x "cuda:0" --recursive --num_callers 8 --gpu_runners_per_device 8 --chunks_per_runner 1024 --chunk_size 1000 --min_qscore 15 --detect_barcodes --detect_adapter
+
+guppy_basecaller -i fast5_pass/ -s new_fastq_pass --flowcell FLO-MIN106 --kit SQK-LSK109  -x "cuda:0" --recursive --qscore_filtering --num_callers 8 --gpu_runners_per_device 8 --chunks_per_runner 1024 --chunk_size 1000 --trim_adapters
+
+guppy_barcoder -i barcode16_new_fastq/ -s  --barcode_kits EXP-NBD104 --trim_barcodes --detect_mid_strand_barcodes --min_score_mid_barcodes 60 -x "cuda:0" 
+
+
+canu -p DICPAN5 -d DICPAN5/DICPAN5_assembly_canu genomesize=5M -nanopore DICPAN5/*fastq batThreads=40
+
+flye --nano-raw DICPAN5/*fastq --genome-size 2M --threads 40 -o DICPAN5/DICPAN5_assembly_flye --meta -m 2000 -i 4
+
+
+for file in *.fastq; do SampleName=`basename $file .fastq`; flye --nano-raw "$SampleName".fastq --genome-size 5M --threads 40 -o "$SampleName"/"$SampleName"_assembly_flye; done
+
+for file in *.fastq; do SampleName=`basename $file .fastq`; canu -p "$SampleName" -d "$SampleName"/"$SampleName"_assembly_canu genomesize=5M -nanopore "$SampleName".fastq; done
+for file in *.fastq; do SampleName=`basename $file .fastq`; flye --nano-raw "$SampleName".fastq --genome-size 5M --threads 40 -o "$SampleName"/"$SampleName"_assembly_flye/; done
+
+
+Local: meryl     12.000 GB    4 CPUs x  24 jobs   288.000 GB  96 CPUs  (k-mer counting)
+-- Local: hap        8.000 GB    4 CPUs x  24 jobs   192.000 GB  96 CPUs  (read-to-haplotype assignment)
+-- Local: cormhap    6.000 GB   16 CPUs x   6 jobs    36.000 GB  96 CPUs  (overlap detection with mhap)
+-- Local: obtovl     4.000 GB    8 CPUs x  12 jobs    48.000 GB  96 CPUs  (overlap detection)
+-- Local: utgovl     4.000 GB    8 CPUs x  12 jobs    48.000 GB  96 CPUs  (overlap detection)
+-- Local: cor        8.000 GB    4 CPUs x  24 jobs   192.000 GB  96 CPUs  (read correction)
+-- Local: ovb        4.000 GB    1 CPU  x  96 jobs   384.000 GB  96 CPUs  (overlap store bucketizer)
+-- Local: ovs        8.000 GB    1 CPU  x  62 jobs   496.000 GB  62 CPUs  (overlap store sorting)
+-- Local: red       16.000 GB    4 CPUs x  24 jobs   384.000 GB  96 CPUs  (read error detection)
+-- Local: oea        8.000 GB    1 CPU  x  62 jobs   496.000 GB  62 CPUs  (overlap error adjustment)
+-- Local: bat       16.000 GB   40 CPUs x   1 job     16.000 GB  40 CPUs  (contig construction with bogart)
+-- Local: cns        -.--- GB    4 CPUs x   - jobs     -.--- GB   - CPUs  (consensus)
+
+
+guppy_basecaller -i fast5_pass/ -s new_fastq_pass --flowcell FLO-MIN106 --kit SQK-LSK109  -x "cuda:0" --recursive --num_callers 8 --gpu_runners_per_device 8 --chunks_per_runner 1024 --chunk_size 1000 --trim_adapters
+
+guppy_barcoder -i pass/ -s new_barcoded --barcode_kits EXP-NBD104 -x "cuda:0"
+
+time dorado basecaller ~/models_dorado/dna_r10.4.1_e8.2_400bps_hac@v3.5.2 pod5s/ --emit-fastq | samtools view -Sh > calls.bam
