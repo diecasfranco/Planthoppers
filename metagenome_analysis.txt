@@ -1,192 +1,14 @@
-Species
-Tettigometra sulphurea
-Callodictya krueperi
-Scorupella discolor
-Trypetimorpha occidentalis
-Phantia subquadrata
-Meenoplus albosignatus
-Ranissus scytha
-Dicranopsis hamata
-Hyalesthes luteipes
-Ommatidiotus longiceps
-Asiraca clavicornis
-Conomelus sp
-Cixidia pilatoi
-Dictyophara multireticulata
-Metcalfa pruinosa
-Pentastira rorida
-Stenocranus major
-Tettigometra  hexaspina
-Zopherisca tendinosa
+A loop to analyze all samples
 
-
-megahit,-1 CIXPIL_S76_L005_R1_001.fastq.gz -2 CIXPIL_S76_L005_R2_001.fastq.gz -o ~/metagenomes/CIXPIL
-
-megahit -1  CIXPIL_S76_L005_R1_001.fastq.gz,DICMUL_S78_L005_R1_001.fastq.gz,METPRU_S77_L005_R1_001.fastq.gz,PENROR_S74_L005_R1_001.fastq.gz,PL623_S81_L005_R1_001.fastq.gz,STEMAJ_S79_L005_R1_001.fastq.gz,TETHEX_S80_L005_R1_001.fastq.gz,Undetermined_S0_L005_R1_001.fastq.gz,ZOPTEN_S75_L005_R1_001.fastq.gz -2 CIXPIL_S76_L005_R2_001.fastq.gz,DICMUL_S78_L005_R2_001.fastq.gz,METPRU_S77_L005_R2_001.fastq.gz,PENROR_S74_L005_R2_001.fastq.gz,PL623_S81_L005_R2_001.fastq.gz,STEMAJ_S79_L005_R2_001.fastq.gz,TETHEX_S80_L005_R2_001.fastq.gz,Undetermined_S0_L005_R2_001.fastq.gz,ZOPTEN_S75_L005_R2_001.fastq.gz,-o Megahit_results
-
-### Trimmomatic
-java -jar ~/symbio/software/Trimmomatic-0.39/trimmomatic-0.39.jar PE -threads 30 -phred33 DICMUL_S78_L005_R1_001.fastq.gz DICMUL_S78_L005_R2_001.fastq.gz R1_pe R1_se R2_pe R2_se ILLUMINACLIP:/mnt/matrix/symbio/software/Trimmomatic-0.39/adapters/TruSeq3-PE.fa:2:30:10:2:keepBothReads LEADING:3 TRAILING:3 MINLEN:36
-TrimmomaticPE: Started with arguments:
- -threads 30 -phred33 DICMUL_S78_L005_R1_001.fastq.gz DICMUL_S78_L005_R2_001.fastq.gz R1_pe R1_se R2_pe R2_se ILLUMINACLIP:/mnt/matrix/symbio/software/Trimmomatic-0.39/adapters/TruSeq3-PE.fa:2:30:10:2:keepBothReads LEADING:3 TRAILING:3 MINLEN:36
-Using PrefixPair: 'TACACTCTTTCCCTACACGACGCTCTTCCGATCT' and 'GTGACTGGAGTTCAGACGTGTGCTCTTCCGATCT'
-ILLUMINACLIP: Using 1 prefix pairs, 0 forward/reverse sequences, 0 forward only sequences, 0 reverse only sequences
-
-java -jar ~/symbio/software/Trimmomatic-0.39/trimmomatic-0.39.jar PE -threads 30 -phred33 DICMUL_S78_L005_R1_001.fastq.gz DICMUL_S78_L005_R2_001.fastq.gz DICMUL_1_pe DICMUL_1_se DICMUL_2_pe DICMUL_2_se ILLUMINACLIP:/mnt/matrix/symbio/software/Trimmomatic-0.39/adapters/TruSeq3-PE.fa:2:30:10:2:keepBothReads LEADING:3 TRAILING:3 MINLEN:100
-
-sample	r1	r2
-CIXPIL	CIXPIL_S76_L005_R1_001.fastq.gz	CIXPIL_S76_L005_R2_001.fastq.gz
-DICMUL	DICMUL_S78_L005_R1_001.fastq.gz	DICMUL_S78_L005_R2_001.fastq.gz
-METPRU	METPRU_S77_L005_R1_001.fastq.gz	METPRU_S77_L005_R2_001.fastq.gz
-PENROR	PENROR_S74_L005_R1_001.fastq.gz	PENROR_S74_L005_R2_001.fastq.gz
-PL623	PL623_S81_L005_R1_001.fastq.gz	PL623_S81_L005_R2_001.fastq.gz
-STEMAJ	STEMAJ_S79_L005_R1_001.fastq.gz	STEMAJ_S79_L005_R2_001.fastq.gz
-TETHEX	TETHEX_S80_L005_R1_001.fastq.gz	TETHEX_S80_L005_R2_001.fastq.gz
-Undetermined	Undetermined_S0_L005_R1_001.fastq.gz	Undetermined_S0_L005_R2_001.fastq.gz
-ZOPTEN	ZOPTEN_S75_L005_R1_001.fastq.gz	ZOPTEN_S75_L005_R2_001.fastq.gz
-
-
-## Usei o protocolo recomendado pelo site do diamond com o argumento blastx --query
-
-diamond blastx --query DCO-PEL-HR4_S2_R1_001.fastq --db ../database_annotations/nr.dmnd --daa HR4_novo.daa
-
-diamond blastx --query 3S_R1_Q.fastq --db ../database_annotations/nr.dmnd --daa 3S.daa
-
-##
-Outro protocolo usando o script da amanda não deu certo na hora de visualizar no MEGAN
-
-são os arquivos HR4_ncbi.daa e HR6_ncbi.daa
-
-## meganizar os arquivos
-daa2rma -i HR4.daa -o HR4.rma -fun EGGNOG INTERPRO2GO SEED KEGG -a2t ~/database_annotations/prot_acc2tax-May2017.abin -a2eggnog ~/database_annotations/acc2eggnog-Oct2016X.abin -a2interpro2go ~/database_annotations/acc2interpro-Nov2016XX.abin -a2seed ~/database_annotations/acc2seed-
-May2015XX.abin -a2kegg ~/database_annotations/acc2kegg-Nov2016X2-ue.abin
-
-trim_galore ZOPTEN_S75_L005_R1_001.fastq.gz ZOPTEN_S75_L005_R2_001.fastq.gz --output_dir ../trim_galore_results/ --illumina -j 20 --fastqc
-
-diamond blastx --query metagenomes/CIXPIL_S76_L005_R1_001.fastq.gz --db symbio/db/nr.dmnd --daa metagenomes/diamond/CIXPIL.daa -p 20
-
-daa2rma -i CALKRU.daa -o CALKRU.rma -mdb megan-map-Oct2019-ue.db
-
-anvi-merge */PROFILE.db -o SAMPLES-MERGED -c contigs.db
-
-
-
-
-export PHYLOFLASH_DBHOME=/home/diego.franco/138
-
-
-#### Extract rRNAs from metagenomes using anvio
-anvi-gen-contigs-database -f CIXPIL_scaffolds.fasta -o CIXPIL.db -n Annia_scaffold
-
-Now I need contigs from megahit output... waiting
-
-
-trim_galore ../raw_data/cicada_data_piotr/20180725_Fulgoromorpha_and_cicadas_NGXbio/TETHEX_S80_L005_R1_001.fastq.gz ../raw_data/cicada_data_piotr/20180725_Fulgoromorpha_and_cicadas_NGXbio/TETHEX_S80_L005_R2_001.fastq.gz --output_dir trim_galore_results/ --illumina -j 8
-
-#####
-Add CALKRU and RANSCY
-/home/diego.franco/symbio/raw_data/cicada_data_piotr/20180927_Fulgoromorpha_NGXbio
-
-###Missing ZOPTEN and Undetermined for diamond
-diamond blastx --query symbio/Diego/trim_galore_results/Undetermined_R1.fq.gz --db symbio/db/nr.dmnd --daa metagenomes/diamond/Undetermined.daa -p 20
-
-
-for Anvio Quality control are missing CALKRU and RANSCY - DONE
-anvi-gen-contigs-database -f ZOPTEN.fasta -o ZOPTEN.db -n 'Annia assembly Zopherisca tendiosa'
-
-
-anvi-gen-contigs-database -f annia_contigs.fasta -o annia_contigs.db -n 'Annia scaffolds'
-	
-phyloFlash.pl -lib DICMUL -read1 ~/symbio/raw_data/cicada_data_piotr/20180725_Fulgoromorpha_and_cicadas_NGXbio/DICMUL_S78_L005_R1_001.fastq.gz -read2 ~/symbio/raw_data/cicada_data_piotr/20180725_Fulgoromorpha_and_cicadas_NGXbio/DICMUL_S78_L005_R2_001.fastq.gz -CPUs 30 -everything -taxlevel 8
-
-phyloFlash.pl -lib METPRU -read1 ~/symbio/raw_data/cicada_data_piotr/20180725_Fulgoromorpha_and_cicadas_NGXbio/METPRU_S77_L005_R1_001.fastq.gz -read2 ~/symbio/raw_data/cicada_data_piotr/20180725_Fulgoromorpha_and_cicadas_NGXbio/METPRU_S77_L005_R2_001.fastq.gz -CPUs 30 -everything -taxlevel 8
-
-phyloFlash.pl -lib PENNOR -read1 ~/symbio/raw_data/cicada_data_piotr/20180725_Fulgoromorpha_and_cicadas_NGXbio/PENROR_S74_L005_R1_001.fastq.gz -read2 ~/symbio/raw_data/cicada_data_piotr/20180725_Fulgoromorpha_and_cicadas_NGXbio/PENROR_S74_L005_R2_001.fastq.gz -CPUs 30 -everything -taxlevel 8
-
-phyloFlash.pl -lib PL623 -read1 ~/symbio/raw_data/cicada_data_piotr/20180725_Fulgoromorpha_and_cicadas_NGXbio/PL623_S81_L005_R1_001.fastq.gz -read2 ~/symbio/raw_data/cicada_data_piotr/20180725_Fulgoromorpha_and_cicadas_NGXbio/PL623_S81_L005_R2_001.fastq.gz -CPUs 30 -everything -taxlevel 8
-
-phyloFlash.pl -lib RANSCY -read1 ~/symbio/raw_data/cicada_data_piotr/20180927_Fulgoromorpha_NGXbio/RANSCY/17127FL-44-02-07_S7_L004_R1_001.fastq.gz -read2 ~/symbio/raw_data/cicada_data_piotr/20180927_Fulgoromorpha_NGXbio/RANSCY/17127FL-44-02-07_S7_L004_R2_001.fastq.gz -CPUs 40 -everything -taxlevel 8
-
-phyloFlash.pl -lib CALKRU -read1 ~/symbio/raw_data/cicada_data_piotr/20180927_Fulgoromorpha_NGXbio/CALKRU/17127FL-44-02-02_S2_L004_R1_001.fastq.gz -read2 ~/symbio/raw_data/cicada_data_piotr/20180927_Fulgoromorpha_NGXbio/CALKRU/17127FL-44-02-02_S2_L004_R2_001.fastq.gz -CPUs 40 -everything -taxlevel 8
-
-phyloFlash.pl -lib SCODIS -read1 ~/symbio/raw_data/cicada_data_piotr/20180927_Fulgoromorpha_NGXbio/SCODIS/17127FL-44-02-03_S3_L004_R1_001.fastq.gz  -read2 ~/symbio/raw_data/cicada_data_piotr/20180927_Fulgoromorpha_NGXbio/SCODIS/17127FL-44-02-03_S3_L004_R2_001.fastq.gz -CPUs 40 -everything -taxlevel 8
-
-prodigal -p meta -a final_contig_genes.faa -d final_contigs_genes_fna -f gff -o final_contigs_genes.gff -i annia_contigs.fasta
-
-
-#### February 
-
-#perform this for each sample
-
-anvi-get-sequences-for-gene-calls -c annia_contigs.db -o gene-calls.fa
-kaiju -t ~/symbio/db/nodes.dmp -f ~/symbio/db/refseq/kaiju_db_refseq.fmi -i gene-calls.fa -o gene-calls_nr.out -z 30 -v
-kaiju -t ~/symbio/db/nodes.dmp -f ~/symbio/db/refseq/kaiju_db_refseq.fmi -i CIXPIL-gene-calls.fa -o CIXPIL-gene-calls_nr.out -z 30 -v
-
-kaiju-addTaxonNames -t ~/symbio/db/nodes.dmp -n ~/symbio/db/names.dmp -i gene-calls_nr.out -o gene-calls_nr.names -r superkingdom,phylum,order,class,family,genus,species
-anvi-import-taxonomy-for-genes -i gene-calls_nr.names -c annia_contigs.db -p kaiju
-centrifuge -f -x ~/symbio/software/centrifuge/centrifuge-1.0.3/p+h+v/p+h+v gene-calls.fa -S centrigue_hits.tsv --threads 20
-anvi-import-taxonomy-for-genes -c annia_contigs.db -i centrifuge_report.tsv centrigue_hits.tsv -p centrifuge
-
-### create fake profile
-anvi-profile -c annia_contigs.db -o annia_profile -S annia_contigs --blank-profile -T 20
-
-
-
-#####################
-bowtie2 --threads 30 -x MAPPING/contigs -f annia_contigs.fasta -S MAPPING/annia_assembling.sam
-$ anvi-display-contigs-stats annia_contigs.db
-anvi-display-contigs-stats annia_contigs.db
-anvi-display-contigs-stats annia_contigs.db --server-only
-screen -list
-screen -R bowtie
-cd metagenomes/Anna_assemblies/
-megahit -1 TETHEX-QUALITY_PASSED_R1.fastq -2 TETHEX-QUALITY_PASSED_R2.fastq --min-contig-len 1000 -m 0.85 -0 ../TETHEX_assembly --out-prefix TETHEX -t 40 --k-min 99 --k-max 255
-run_MaxBin.pl -thread 30 -contig annia_contigs.fasta -out maxbin -abund abundance_maxbin.txt
-conda activate anvio
-prodigal
-prodigal -p meta -a final_contig_genes.faa -d final_contigs_genes_fna -f gff -o final_contigs_genes.gff -i annia_contigs.fasta
-########################################
-
-### Run this again
-bowtie2-build megahit_results/final.contigs.fa mapping/contigs --threads 30 --large-index
-
-R1s=`ls Quality_control/$sample*QUALITY_PASSED_R1* | python -c 'import sys; print ",".join([x.strip() for x in sys.stdin.readlines()])'`
-R2s=`ls Quality_control/$sample*QUALITY_PASSED_R2* | python -c 'import sys; print ",".join([x.strip() for x in sys.stdin.readlines()])'`
-
-
-
-#!/bin/bash
-
-# A simple loop to serially map all samples.
-# referenced from within http://merenlab.org/tutorials/assembly_and_mapping/
-
-# how many threads should each mapping task use?
-NUM_THREADS=30
-
-for sample in `awk '{print $1}' samples.txt`
-do
-    if [ "$sample" == "sample" ]; then continue; fi
-    
-    # you need to make sure you "ls Quality_control/*QUALITY_PASSED_R1*" returns R1 files for all your samples in samples.txt
-    R1s=`ls Quality_control/$sample*QUALITY_PASSED_R1* | python -c 'import sys; print ",".join([x.strip() for x in sys.stdin.readlines()])'`
-    R2s=`ls Quality_control/$sample*QUALITY_PASSED_R2* | python -c 'import sys; print ",".join([x.strip() for x in sys.stdin.readlines()])'`
-    
-    bowtie2 --threads $NUM_THREADS -x mapping/contigs -1 $R1s -2 $R2s --no-unal -S mapping/$sample.sam
-    samtools view -F 4 -bS mapping/$sample.sam > mapping/$sample-RAW.bam
-    anvi-init-bam mapping/$sample-RAW.bam -o mapping/$sample.bam
-    rm mapping/$sample.sam mapping/$sample-RAW.bam
+for file in *_R1.fq.gz; do
+    SampleName=`basename $file _R1.fq.gz`
+    trim_galore --gzip --paired "$SampleName"_R1.fq.gz "$SampleName"_R2.fq.gz -o ../trimmed_seqs_batch2 -j 80 --trim1 --retain_unpaired -r1 100 -r2 100 --length 80 -phred33
 done
 
-# mapping is done, and we no longer need bowtie2-build files
-rm mapping/*.bt2
-
-anvi-profile -c PENROR.db -o PENROR_profile -S PENROR --blank-profile -T 20
-
-
-for sample in `awk '{print $1}' samples.txt`; do if [ "$sample" == "sample" ]; then continue; fi; bowtie2 --threads 40 -x mapping/contigs -1 $R1s -2 $R2s --no-unal -S mapping/$sample.sam; samtools view -F 4 -bS -@ 30 mapping/$sample.sam > mapping/$sample-RAW.bam; anvi-init-bam mapping/$sample-RAW.bam -o mapping/$sample.bam; done
-
-
-
-PHYLOFLASH_DBHOME=/mnt/matrix/symbio/db/138/
+for file in *_R1.fq.gz; do
+    SampleName=`basename $file _R1.fq.gz`
+    megahit -1 "$SampleName"_R1.fq.gz -2 "$SampleName"_R2.fq.gz -o ../assemblies_batch2/"$SampleName"_assembly -t 80 --min-contig-len 1000 -m 0.85  --out-prefix "$SampleName" --k-max 255
+done
 
 
 ##ASICLA
@@ -619,15 +441,6 @@ anvi-get-sequences-for-gene-calls -c AGAHAV.db --get-aa-sequences -o AGAHAV-aa.f
 anvi-run-kegg-kofams -c AGAHAV.db -T 80
 anvi-estimate-metabolism -c AGAHAV.db --kegg-output-modes modules_custom --custom-output-headers kegg_module,module_name,module_category,module_subcategory,kofam_hits_in_module,module_is_complete --metagenome-mode -O AGAHAV_kegg
 
-for file in *_R1.fq.gz; do
-    SampleName=`basename $file _R1.fq.gz`
-    trim_galore --gzip --paired "$SampleName"_R1.fq.gz "$SampleName"_R2.fq.gz -o ../trimmed_seqs_batch2 -j 80 --trim1 --retain_unpaired -r1 100 -r2 100 --length 80 -phred33
-done
-
-for file in *_R1.fq.gz; do
-    SampleName=`basename $file _R1.fq.gz`
-    megahit -1 "$SampleName"_R1.fq.gz -2 "$SampleName"_R2.fq.gz -o ../assemblies_batch2/"$SampleName"_assembly -t 80 --min-contig-len 1000 -m 0.85  --out-prefix "$SampleName" --k-max 255
-done
 
 anvi-script-reformat-fasta CALBON1.contigs.fa -o CALBON1_contigs.fasta --simplify-names --prefix CALBON1 --report-file CALBON1_contigs_info.txt
 bowtie2-build CALBON1_contigs.fasta contigs
